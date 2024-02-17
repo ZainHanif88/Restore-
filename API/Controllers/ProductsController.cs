@@ -28,6 +28,23 @@ namespace API.Controllers
 
         public async Task <ActionResult<Product>> GetProduct(int id){
             return await _context.Products.FindAsync(id);
+        }
+
+         [HttpPost]
+        public async Task<ActionResult<Product>> CreateProduct(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                // Add the new product to the database
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+
+                // Return the newly created product
+                return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+            }
+
+            // If the input data is not valid, return a bad request
+            return BadRequest(ModelState);
         }   
     }
 }
